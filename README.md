@@ -181,7 +181,8 @@ http://127.0.0.1:5000/products
 **If information for an existing product is inserted, error code `409 CONFLICT` is returned:**
 
 ## Get a list of all of the products/pizzas
-**The endpoint is public and available for either authenticated or non-authenticated users**
+
+**The `GET` method is public and available for either authenticated or non-authenticated users**
 
 ### Request
 
@@ -206,6 +207,44 @@ http://127.0.0.1:5000/products
         "rating": "0"
     }
 ]
+```
+
+## Get info for a single product/pizza
+
+**The `GET` method is public and available for either authenticated or non-authenticated users**
+
+### Request
+
+`PUT /product/product_id`
+```
+http://127.0.0.1:5000/product/1
+```
+
+### Response
+
+`200 OK`
+```
+{
+    "name": "Margherita",
+    "ingredients": "tomatoes, mozzarella, fresh basil leaves, extra virgin olive oil",
+    "size": "s",
+    "grammage": 350,
+    "price": "4.50",
+    "photo_url": "https://img.sndimg.com/food/image/upload/q_92,fl_progressive,w_1200,c_scale/v1/img/submissions/recipe/2001215136/SVs7T2FbTrmMpWri62fU_Margarita%20pizza.jpg",
+    "id": 1,
+    "rating": "0"
+}
+```
+
+### Errors
+
+**If an invalid product ID is inserted the following error will be raised:**
+
+`404 NOT FOUNT`
+```
+{
+    "message": "Product not found"
+}
 ```
 
 ## Update product/pizza info
@@ -270,7 +309,7 @@ http://127.0.0.1:5000/product/1
 
 **If an invalid product ID is inserted the following error will be raised:**
 
-`404 NOT FOUNT`
+`404 NOT FOUND`
 ```
 {
     "message": "Product not found"
