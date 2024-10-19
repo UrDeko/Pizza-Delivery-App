@@ -1,26 +1,86 @@
 # Pizza Delivery App
 
+A Flask-based web application that utilizes a RESTful API, with support for database migrations and environment-based configuration.
 
-## Brief overview
-
-A RESTful API created using Python and Flask. The application uses relational database model based on PostgreSQL and the database interraction is held by Flask's SQLAlchemy ORM package. JWT is used as a method for authentication. In order to be authorized for perfoming certain actions a user needs to be registered as either `admin`, `chef`, `deliver` or `customer`. The data that is part of the body of each request is validated by using schemas from the Python's Marshmallow package.
-
-## Run application
+1. **Create a virtual environment (recommended):**
 
 ```
-python app.py
+python3 -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate
 ```
 
-## Register a customer
+2. **Install the dependencies:**
 
-### Request
+```
+pip install -r requirements.txt
+```
+
+3. **Set up environment variables: Create a `.env` file in the root directory and add the following:**
+
+```
+DB_USER=your_db_user
+DB_PASS=your_db_password
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=your_db_name
+ENVIRONMENT=DevelopmentEnvironment  # or ProductionEnvironment
+```
+
+## Usage
+
+1. **Run the application**
+
+```
+flask run
+```
+
+2. **Access the application: Open a web browser and go to `http://127.0.0.1:5000`.**
+
+## Features
+
+* RESTful API using `flask_restful`
+* Environment-based configuration for development and production
+* Database integration with PostgreSQL
+* Database migration support via `flask_migrate`
+
+## Configuration
+
+The application configuration is handled through environment-based classes in `config.py`:
+
+* DevelopmentEnvironment: For local development with debug mode enabled.
+* ProductionEnvironment: For deployment with debug mode disabled.
+
+Set the environment using the `.env` file.
+
+## Database Setup
+
+1. **Initialize the database:**
+
+   ```
+   flask db init
+   ```
+
+2. **Apply migrations:**
+
+   ```
+   flask db migrate -m "Initial migration"
+   flask db upgrade
+   ```
+
+## Routes
+
+The routes are dynamically added from the resources.routes module. Make sure to update that file with your resource definitions.
+
+### Register a customer
+
+#### Request
 
 `POST /register`
 ```
 http://127.0.0.1:5000/register
 ```
 
-### Request Body
+#### Request Body
 
 ```
 {
@@ -32,7 +92,7 @@ http://127.0.0.1:5000/register
 }
 ```
 
-### Response
+#### Response
 
 `201 CREATED`
 ```
@@ -42,11 +102,11 @@ http://127.0.0.1:5000/register
 ```
 **JSON Web Token that is used in the `Authorization` header in follow-up requests**
 
-### Errors
+#### Errors
 
 **One email cannot be used from two or more users!**
 
-### Request Body
+#### Request Body
 
 ```
 {
@@ -58,7 +118,7 @@ http://127.0.0.1:5000/register
 }
 ```
 
-### Response
+#### Response
 
 `400 BAD REQUEST`
 ```
@@ -72,16 +132,16 @@ http://127.0.0.1:5000/register
 }
 ```
 
-## Login
+### Login
 
-### Request
+#### Request
 
 `POST /login`
 ```
 http://127.0.0.1:5000/login
 ```
 
-### Request Body
+#### Request Body
 
 ```
 {
@@ -90,7 +150,7 @@ http://127.0.0.1:5000/login
 }
 ```
 
-### Response
+#### Response
 
 `200 OK`
 ```
@@ -100,9 +160,9 @@ http://127.0.0.1:5000/login
 ```
 **JSON Web Token that is used in the `Authorization` header in follow-up requests**
 
-### Errors
+#### Errors
 
-### Request Body
+#### Request Body
 
 ```
 {
@@ -111,7 +171,7 @@ http://127.0.0.1:5000/login
 }
 ```
 
-### Response
+#### Response
 
 `404 NOT FOUND`
 ```
@@ -120,18 +180,18 @@ http://127.0.0.1:5000/login
 }
 ```
 
-## Add a product/pizza
+### Add a product/pizza
 
 **Permissions: `chef` only**
 
-### Request
+#### Request
 
 `POST /products`
 ```
 http://127.0.0.1:5000/products
 ```
 
-### Request Body
+#### Request Body
 
 **Ingredients should be separated by `comma + space` in order for them to be properly evaluated**
 
@@ -146,7 +206,7 @@ http://127.0.0.1:5000/products
 }
 ```
 
-### Response
+#### Response
 
 `201 CREATED`
 ```
@@ -155,9 +215,9 @@ http://127.0.0.1:5000/products
 }
 ```
 
-### Errors
+#### Errors
 
-### Request Body
+#### Request Body
 ```
 {
     "name": "Margherita",
@@ -169,7 +229,7 @@ http://127.0.0.1:5000/products
 }
 ```
 
-### Response
+#### Response
 
 `400 BAD REQUEST`
 ```
@@ -180,18 +240,18 @@ http://127.0.0.1:5000/products
 
 **If information for an existing product is inserted, error code `409 CONFLICT` is returned:**
 
-## Get a list of all of the products/pizzas
+### Get a list of all of the products/pizzas
 
 **The `GET` method is public and available for either authenticated or non-authenticated users**
 
-### Request
+#### Request
 
 `GET /products`
 ```
 http://127.0.0.1:5000/products
 ```
 
-### Response
+#### Response
 
 `200 OK`
 ```
@@ -209,18 +269,18 @@ http://127.0.0.1:5000/products
 ]
 ```
 
-## Get info for a single product/pizza
+### Get info for a single product/pizza
 
 **The `GET` method is public and available for either authenticated or non-authenticated users**
 
-### Request
+#### Request
 
 `PUT /product/product_id`
 ```
 http://127.0.0.1:5000/product/1
 ```
 
-### Response
+#### Response
 
 `200 OK`
 ```
@@ -236,7 +296,7 @@ http://127.0.0.1:5000/product/1
 }
 ```
 
-### Errors
+#### Errors
 
 **If an invalid product ID is inserted the following error will be raised:**
 
@@ -247,18 +307,18 @@ http://127.0.0.1:5000/product/1
 }
 ```
 
-## Update product/pizza info
+### Update product/pizza info
 
 **Permissions: `chef` only**
 
-### Request
+#### Request
 
 `PUT /product/product_id`
 ```
 http://127.0.0.1:5000/product/1
 ```
 
-### Request Body
+#### Request Body
 ```
 {
     "name": "Margherita",
@@ -270,11 +330,11 @@ http://127.0.0.1:5000/product/1
 }
 ```
 
-### Response
+#### Response
 
 `204 NO CONTENT'
 
-### Errors
+#### Errors
 
 **If an invalid product ID is inserted the following error will be raised:**
 
@@ -287,18 +347,18 @@ http://127.0.0.1:5000/product/1
 
 **The `PUT` method uses the same payload validation as `GET` which means that the same input constraints will be applied and the same errors will be raised**
 
-## Delete product/pizza
+### Delete product/pizza
 
 **Permissions: `chef` only**
 
-### Request
+#### Request
 
 `PUT /product/product_id`
 ```
 http://127.0.0.1:5000/product/1
 ```
 
-### Response
+#### Response
 
 `200 OK`
 ```
@@ -315,3 +375,16 @@ http://127.0.0.1:5000/product/1
     "message": "Product not found"
 }
 ```
+
+
+## Contributing
+
+1. Fork the repository.
+ 
+2. Create a new branch (git checkout -b feature/your-feature-name).
+ 
+3. Commit your changes (git commit -m 'Add some feature').
+ 
+4. Push to the branch (git push origin feature/your-feature-name).
+   
+5. Create a new Pull Request.
