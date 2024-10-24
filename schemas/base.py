@@ -10,10 +10,12 @@ class UserBaseSchema(Schema):
     phone = fields.String(required=True)
 
 
-class ProductBaseSchema(Schema):
+class PizzaBaseSchema(Schema):
     name = fields.String(required=True)
     ingredients = fields.String(required=True)
+
+
+class PizzaSizeBaseSchema(Schema):
     size = fields.Enum(SizeEnum, required=True)
     grammage = fields.Integer(required=True)
     price = fields.Decimal(required=True, places=2, as_string=True)
-    photo = fields.String(required=True)

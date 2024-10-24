@@ -18,7 +18,7 @@ class UserLogin(Resource):
 
         data = request.get_json()
         token = UserManager.login(data)
-        return {'token': token}, 200
+        return {"token": token}, 200
 
 
 class UserRegister(Resource):
@@ -28,7 +28,7 @@ class UserRegister(Resource):
 
         data = request.get_json()
         token = UserManager.register(data)
-        return {'token': token}, 201
+        return {"token": token}, 201
 
 
 class Password(Resource):

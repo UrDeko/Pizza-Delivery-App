@@ -13,7 +13,7 @@ class UserModel(db.Model):
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
     first_name: Mapped[str] = mapped_column(db.String(255), nullable=False)
     last_name: Mapped[str] = mapped_column(db.String(255), nullable=False)
-    email: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    email: Mapped[str] = mapped_column(db.String(255), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(db.String(255), nullable=False)
     phone: Mapped[str] = mapped_column(db.String(13), nullable=False)
     role: Mapped[RolesEnum] = mapped_column(
@@ -24,4 +24,6 @@ class UserModel(db.Model):
         db.DateTime, server_default=func.now(), onupdate=func.now()
     )
 
-    orders: Mapped[list["OrderModel"]] = db.relationship(lazy=True)
+    orders: Mapped[list["OrderModel"]] = db.relationship(
+        "OrderModel", back_populates="user", lazy=True
+    )

@@ -6,7 +6,7 @@ from resources.order import (
     OrderInTransition,
     OrderDelivered,
 )
-from resources.product import Products, Product
+from resources.pizza import Pizza, Pizzas, PizzaSize, PizzaSizes
 from resources.user import Users, User
 
 
@@ -21,6 +21,8 @@ routes = (
     (OrderPending, "/order/<int:order_id>/pending"),
     (OrderInTransition, "/order/<int:order_id>/in-transition"),
     (OrderDelivered, "/order/<int:order_id>/delivered"),
-    (Products, "/products"),
-    (Product, "/product/<int:product_id>"),
+    (Pizzas, "/pizzas"),
+    (Pizza, "/pizza/<int:pizza_id>"),
+    (PizzaSizes, "/pizza-sizes"),
+    (PizzaSize, "/pizza-size/<int:pizza_id>"),
 )

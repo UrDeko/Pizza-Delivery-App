@@ -11,7 +11,7 @@ class OrderModel(db.Model):
     __tablename__ = "orders"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True, autoincrement=True)
-    customer_id: Mapped[int] = mapped_column(db.ForeignKey("users.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(db.ForeignKey("users.id"), nullable=False)
     total_price: Mapped[float] = mapped_column(
         db.Numeric(precision=10, scale=2), default=0, nullable=False
     )
@@ -23,6 +23,9 @@ class OrderModel(db.Model):
         db.Enum(StatusEnum), default=StatusEnum.pending, nullable=False
     )
 
-    products: Mapped[list["OrderProductModel"]] = db.relationship(
-        cascade="all, delete", lazy=True
+    user: Mapped["UserModel"] = db.relationship(
+        "UserModel", back_populates="orders", lazy=True
+    )
+    items: Mapped[list["OrderItemModel"]] = db.relationship(
+        cascade="all, delete-orphan", lazy=True
     )

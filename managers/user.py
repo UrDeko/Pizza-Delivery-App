@@ -1,10 +1,12 @@
-from werkzeug.exceptions import Conflict, NotFound
+from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import Conflict, InternalServerError, NotFound
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from db import db
 from managers.auth import Authenticate
 from models.enums import RolesEnum
 from models.user import UserModel
+from services.ses_email import ses
 
 
 class UserManager:
@@ -24,14 +26,26 @@ class UserManager:
     @staticmethod
     def register(data):
 
-        data["password"] = generate_password_hash(
-            data["password"], method="pbkdf2:sha256"
-        )
-        data["role"] = RolesEnum.customer.name
-        user = UserModel(**data)
+        subject = f"Welcome to our Pizza club, {data["first_name"]}!"
+        content = f"We are happy to provide you with a wide selection of delicious pizzas to choose from. Don't be late and order now!\nRegards,\nClub Pizza"
 
-        db.session.add(user)
-        db.session.flush()
+        try:
+            data["password"] = generate_password_hash(
+                data["password"], method="pbkdf2:sha256"
+            )
+            data["role"] = RolesEnum.customer.name
+            user = UserModel(**data)
+
+            db.session.add(user)
+            db.session.flush()
+
+            ses.send_email(data["email"], subject, content)
+        except IntegrityError:
+            raise Conflict()
+        except Exception as ex:
+            db.session.rollback()
+            db.session.remove()
+            raise InternalServerError(f"Error: {str(ex)}")
 
         return Authenticate.encode_token(user)
 

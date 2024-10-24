@@ -1,11 +1,17 @@
 from marshmallow import fields, Schema, validates, ValidationError
 
-from schemas.request.order_product import OrderProductRequestSchema
+from models.enums import SizeEnum
+
+
+class OrderItemRequestSchema(Schema):
+    name = fields.String(required=True)
+    size = fields.Enum(SizeEnum, required=True)
+    quantity = fields.Integer(required=True)
 
 
 class OrderRequestSchema(Schema):
     products = fields.List(
-        fields.Nested(OrderProductRequestSchema, required=True), required=True
+        fields.Nested(OrderItemRequestSchema, required=True), required=True
     )
 
     @validates("products")

@@ -1,4 +1,5 @@
 from models.user import *
 from models.order import *
-from models.product import *
-from models.order_product import *
+from models.pizza import *
+from models.pizza_size import *
+from models.order_item import *
