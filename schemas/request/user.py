@@ -47,12 +47,11 @@ class UserRegisterSchema(UserLoginSchema):
     @validates("phone")
     def validate_phone(self, value: str):
 
-        if not value.startswith("+"):
-            raise ValidationError("A '+' sign needs to be entered")
-        elif not value[1:].isnumeric():
-            raise ValidationError("Invalid phone number")
-
-        if len(value.strip()) < 10 or len(value.strip()) > 13:
+        if (
+            not value.startswith("+")
+            or not value[1:].isnumeric()
+            or (len(value.strip()) < 10 or len(value.strip()) > 17)
+        ):
             raise ValidationError("Invalid phone number")
 
 

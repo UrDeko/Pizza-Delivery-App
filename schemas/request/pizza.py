@@ -14,10 +14,11 @@ class PizzaRequestSchema(PizzaBaseSchema):
         ingredients = [ingredient.strip() for ingredient in value.split(", ")]
 
         if len(ingredients) < 3:
-            raise ValidationError("Pizza should contain more than 3 ingredients")
+            raise ValidationError("Pizza should contain more than 2 ingredients")
 
 
 class PizzaSizeRequestSchema(PizzaSizeBaseSchema):
+    name = fields.String(required=True)
 
     @validates("price")
     def validate_price(self, value: int):

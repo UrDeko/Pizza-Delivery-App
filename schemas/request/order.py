@@ -15,15 +15,20 @@ class OrderRequestSchema(Schema):
     )
 
     @validates("products")
-    def validate_products(self, product_list):
+    def validate_products(self, products):
 
-        if not product_list:
+        if not products:
             raise ValidationError("Empty product list")
 
-        for i in range(len(product_list) - 1):
-            for j in range(i + 1, len(product_list)):
+        try:
+            pizzas = list(
+                zip([p["name"] for p in products], [p["size"] for p in products])
+            )
 
-                if product_list[i].get("name") == product_list[j].get(
-                    "name"
-                ) and product_list[i].get("size") == product_list[j].get("size"):
-                    raise ValidationError("Same product specified more than once")
+            for pizza in pizzas:
+                if pizzas.count(pizza) > 1:
+                    raise ValidationError(
+                        f"Product '{pizza[0]}' with size '{pizza[1].name}' specified more than once"
+                    )
+        except KeyError:
+            pass
