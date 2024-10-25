@@ -10,7 +10,7 @@ class PizzaModel(db.Model):
     __tablename__ = "pizzas"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    name: Mapped[str] = mapped_column(db.String(255), unique=True, nullable=False)
     ingredients: Mapped[str] = mapped_column(db.Text, nullable=False)
     photo_url: Mapped[str] = mapped_column(db.String(255), nullable=False)
     created_on: Mapped[datetime] = mapped_column(db.DateTime, server_default=func.now())

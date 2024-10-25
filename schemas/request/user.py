@@ -29,7 +29,7 @@ class UserRegisterSchema(UserLoginSchema):
 
         if result:
             raise ValidationError(
-                "Invalid password. Required: uppercase - 2, numbers - 2, special - 2, nonletters - 2"
+                "Invalid password. Use 2 of the following: uppercase, numbers, special, nonletters"
             )
 
     @validates("first_name")

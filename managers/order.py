@@ -57,7 +57,7 @@ class OrderManager:
             except NoResultFound:
                 raise NotFound(f"Pizza '{product["name"]}' not found")
             except IndexError:
-                raise NotFound(f"Size {product["size"]} not available")
+                raise NotFound(f"Size '{product["size"]}' for pizza '{product["name"]}' is not available yet")
 
             quantity = int(product["quantity"])
             order_item = OrderItemModel(pizza_size_id=pizza_size.id, quantity=quantity)
