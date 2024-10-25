@@ -24,14 +24,3 @@ class PizzaModel(db.Model):
         cascade="all, delete-orphan",
         lazy=True,
     )
-
-    # size: Mapped[SizeEnum] = mapped_column(
-    #     db.Enum(SizeEnum), default=SizeEnum.m, nullable=False
-    # )
-    # grammage: Mapped[int] = mapped_column(db.Integer, nullable=False)
-    # price: Mapped[float] = mapped_column(
-    #     db.Numeric(precision=5, scale=2), default=0, nullable=False
-    # )
-    # rating: Mapped[int] = mapped_column(db.Integer, default=0, nullable=False)
-
-    # db.UniqueConstraint(name, size)

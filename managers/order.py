@@ -71,38 +71,6 @@ class OrderManager:
         db.session.add(order)
         db.session.flush()
 
-    # @staticmethod
-    # def create_order(user: UserModel, data):
-
-    #     order_products = []
-    #     total_price = 0
-
-    #     for product in data["products"]:
-    #         try:
-    #             product_obj = db.session.execute(
-    #                 db.select(ProductModel).filter_by(
-    #                     name=product["name"], size=product["size"]
-    #                 )
-    #             ).scalar_one()
-    #         except NoResultFound:
-    #             raise BadRequest(f"Product '{product["name"]}' not found")
-
-    #         quantity = int(product["quantity"])
-    #         order_product = OrderProductModel(
-    #             product_id=product_obj.id, quantity=quantity
-    #         )
-    #         order_products.append(order_product)
-
-    #         total_price += quantity * product_obj.price
-    #         product_obj.rating += quantity
-
-    #     order = OrderModel(
-    #         customer_id=user.id, total_price=total_price, products=order_products
-    #     )
-
-    #     db.session.add(order)
-    #     db.session.flush()
-
     @staticmethod
     def update_order(order_id, status):
 
