@@ -21,9 +21,7 @@ class OrderRequestSchema(Schema):
             raise ValidationError("Empty product list")
 
         try:
-            pizzas = list(
-                zip([p["name"] for p in products], [p["size"] for p in products])
-            )
+            pizzas = [(p["name"], p["size"]) for p in products]
 
             for pizza in pizzas:
                 if pizzas.count(pizza) > 1:

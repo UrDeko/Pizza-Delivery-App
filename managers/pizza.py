@@ -10,7 +10,7 @@ from constants import TEMP_FILE_FOLDER
 from db import db
 from models.pizza import PizzaModel
 from models.pizza_size import PizzaSizeModel
-from services.s3_storage import s3_store
+from services.s3_service import s3_store
 from util.helper import decode_photo
 
 

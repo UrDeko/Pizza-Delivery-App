@@ -6,7 +6,7 @@ from db import db
 from managers.auth import Authenticate
 from models.enums import RolesEnum
 from models.user import UserModel
-from services.ses_email import ses
+from services.ses_service import ses_email
 
 
 class UserManager:
@@ -39,7 +39,7 @@ class UserManager:
             db.session.add(user)
             db.session.flush()
 
-            ses.send_email(data["email"], subject, content)
+            ses_email.send_email(data["email"], subject, content)
         except IntegrityError:
             raise Conflict()
         except Exception as ex:

@@ -11,7 +11,7 @@ class OrderModel(db.Model):
     __tablename__ = "orders"
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(db.ForeignKey("users.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     total_price: Mapped[float] = mapped_column(
         db.Numeric(precision=10, scale=2), default=0, nullable=False
     )

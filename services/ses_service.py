@@ -34,4 +34,4 @@ class SESEmail:
             raise InternalServerError(f"Failed to send email: {ex}")
 
 
-ses = SESEmail()
+ses_email = SESEmail()

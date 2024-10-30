@@ -25,5 +25,5 @@ class UserModel(db.Model):
     )
 
     orders: Mapped[list["OrderModel"]] = db.relationship(
-        "OrderModel", back_populates="user", lazy=True
+        "OrderModel", back_populates="user", cascade="all, delete-orphan", lazy=True
     )

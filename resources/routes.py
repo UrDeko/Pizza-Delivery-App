@@ -5,6 +5,8 @@ from resources.order import (
     OrderPending,
     OrderInTransition,
     OrderDelivered,
+    CapturePayment,
+    CancelPayment,
 )
 from resources.pizza import Pizza, Pizzas, PizzaSize, PizzaSizes
 from resources.user import Users, User
@@ -21,6 +23,8 @@ routes = (
     (OrderPending, "/order/<int:order_id>/pending"),
     (OrderInTransition, "/order/<int:order_id>/in-transition"),
     (OrderDelivered, "/order/<int:order_id>/delivered"),
+    (CapturePayment, "/payment/execute"),
+    (CancelPayment, "/payment/cancel"),
     (Pizzas, "/pizzas"),
     (Pizza, "/pizza/<int:pizza_id>"),
     (PizzaSizes, "/pizza-sizes"),

@@ -1,4 +1,17 @@
+from datetime import timedelta
+
+import paypalrestsdk
+
 from decouple import config
+
+
+paypalrestsdk.configure(
+    {
+        "mode": "sandbox",
+        "client_id": config("PAYPAL_CLIENT_ID"),
+        "client_secret": config("PAYPAL_CLIENT_SECRET"),
+    }
+)
 
 
 class ProductionEnvironment:

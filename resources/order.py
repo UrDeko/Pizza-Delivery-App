@@ -1,5 +1,6 @@
 from flask import request
 from flask_restful import Resource
+from werkzeug.exceptions import BadRequest
 
 from managers.auth import auth
 from managers.order import OrderManager
@@ -24,8 +25,8 @@ class Orders(Resource):
     def post(self):
         user = auth.current_user()
         data = request.get_json()
-        OrderManager.create_order(user, data)
-        return {"message": "Order accepted"}, 201
+        response = OrderManager.create_order(user, data)
+        return response, 200
 
     @auth.login_required
     # @permission_required([RolesEnum.deliver, RolesEnum.admin])
@@ -80,3 +81,33 @@ class OrderDelivered(Resource):
 
         OrderManager.update_order(order_id, StatusEnum.delivered)
         return {"message": "Order successfully delivered"}, 200
+
+
+class CapturePayment(Resource):
+
+    def get(self):
+
+        try:
+            data = {
+                "unpaid_order_id": request.args["unpaid_order_id"],
+                "payment_id": request.args["paymentId"],
+                "payer_id": request.args["PayerID"],
+            }
+        except KeyError:
+            raise BadRequest("Insufficient payload data")
+
+        OrderManager.capture_payment(data)
+        return {"message": "Order successfully created"}, 201
+
+
+class CancelPayment(Resource):
+
+    def get(self):
+
+        try:
+            unpaid_order_id = request.args["unpaid_order_id"]
+        except KeyError:
+            raise BadRequest("Invalid payload data")
+
+        OrderManager.cancel_payment(unpaid_order_id)
+        return {"message": "Payment cancelled"}
