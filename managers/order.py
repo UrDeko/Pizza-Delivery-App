@@ -47,40 +47,6 @@ class OrderManager:
 
         return order
 
-    # Old stable implementation
-
-    # @staticmethod
-    # def create_order(user: UserModel, data):
-
-    #     order_items = []
-    #     total_price = 0
-
-    #     for product in data["products"]:
-    #         try:
-    #             pizza = db.session.execute(
-    #                 db.select(PizzaModel).filter_by(name=product["name"])
-    #             ).scalar_one()
-
-    #             pizza_size = [p for p in pizza.sizes if p.size.name == product["size"]][
-    #                 0
-    #             ]
-    #         except NoResultFound:
-    #             raise NotFound(f"Pizza '{product["name"]}' not found")
-    #         except IndexError:
-    #             raise NotFound(f"Size '{product["size"]}' for pizza '{product["name"]}' is not available yet")
-
-    #         quantity = int(product["quantity"])
-    #         order_item = OrderItemModel(pizza_size_id=pizza_size.id, quantity=quantity)
-    #         order_items.append(order_item)
-
-    #         total_price += quantity * pizza_size.price
-    #         pizza_size.rating += quantity
-
-    #     order = OrderModel(user_id=user.id, total_price=total_price, items=order_items)
-
-    #     db.session.add(order)
-    #     db.session.flush()
-
     @staticmethod
     def create_order(user: UserModel, data):
 
