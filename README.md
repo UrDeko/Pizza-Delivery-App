@@ -1,6 +1,22 @@
 # Pizza Delivery App
 
-A Flask-based web application that utilizes a RESTful API, with support for database migrations and environment-based configuration.
+A RESTful API for managing a pizza delivery service, built with Flask, Flask-RESTful, and SQLAlchemy. This application allows users to register, order pizzas, track order statuses, and handle payments via PayPal.
+
+## Features
+
+- **User Authentication**: User registration, login, and password management.
+- **Pizza Management**: Manage pizza types, sizes, and details.
+- **Order Management**: Create and manage orders with various statuses (pending, in transition, delivered).
+- **Payment Processing**: Integrate with PayPal for payment capture.
+- **User Management**: Admin functionalities to manage user profiles.
+- **File Management**: Save files in the cloud via the Amazon S3 service.
+- **Email Management**: Send emails via Amazon Simple Email Service (SES).
+- **SMS Notifications**: Send SMS messages using the Twilio API.
+
+## Prerequisites
+
+- Python 3.10+
+- PostgreSQL (or a configured database compatible with SQLAlchemy)
 
 1. **Create a virtual environment (recommended):**
 
@@ -24,7 +40,27 @@ DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=your_db_name
 ENVIRONMENT=DevelopmentEnvironment  # or ProductionEnvironment
+TWILIO_SID=your_twilio_sid
+TWILIO_TOKEN=your_twilio_token
+TWILIO_NUMBER=your_twilio_number
+TWILIO_VERIFIED_NUMBER=your_twilio_verified_number
+AWS_ACCESS_KEY=your_aws_access_key
+AWS_SECRET_KEY=your_aws_secret_key
+AWS_BUCKET=your_aws_bucket
+AWS_REGION=your_aws_region
+SES_EMAIL_SENDER=your_ses_email_sender
+PAYPAL_CLIENT_ID=your_paypal_client_id
+PAYPAL_CLIENT_SECRET=your_paypal_client_secret
 ```
+
+## Configuration
+
+The application configuration is handled through environment-based classes in `config.py`:
+
+* DevelopmentEnvironment: For local development with debug mode enabled.
+* ProductionEnvironment: For deployment with debug mode disabled.
+
+Set the environment using the `.env` file.
 
 ## Usage
 
@@ -35,22 +71,6 @@ flask run
 ```
 
 2. **Access the application: Open a web browser and go to `http://127.0.0.1:5000`.**
-
-## Features
-
-* RESTful API using `flask_restful`
-* Environment-based configuration for development and production
-* Database integration with PostgreSQL
-* Database migration support via `flask_migrate`
-
-## Configuration
-
-The application configuration is handled through environment-based classes in `config.py`:
-
-* DevelopmentEnvironment: For local development with debug mode enabled.
-* ProductionEnvironment: For deployment with debug mode disabled.
-
-Set the environment using the `.env` file.
 
 ## Database Setup
 
@@ -67,9 +87,20 @@ Set the environment using the `.env` file.
    flask db upgrade
    ```
 
-## Routes
+## Models
+The application uses SQLAlchemy models for the following entities:
 
-The routes are dynamically added from the resources.routes module. Make sure to update that file with your resource definitions.
+- **User: Stores user information and credentials.**
+- **Pizza: Represents different types of pizzas available.**
+- **PizzaSize: Represents available pizza sizes.**
+- **Order: Stores order details and tracks order status.**
+- **OrderItem: Stores individual items in an order, linking Order and Pizza.**
+- **UnpaidOrder: Stores order details temporarily until the payment is captured.**
+- **UnpaidOrderItem: Stores individual items in an unpaid order.**
+
+## API Endpoints
+
+The routes are dynamically added from the resources.routes module.
 
 ### Register a customer
 
