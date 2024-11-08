@@ -20,7 +20,7 @@ class Orders(Resource):
         return {"orders": OrderResponseSchema().dump(orders, many=True)}, 200
 
     @auth.login_required
-    @permission_required([RolesEnum.customer])
+    @permission_required([RolesEnum.customer, RolesEnum.admin])
     @validate_schema(OrderRequestSchema)
     def post(self):
         user = auth.current_user()
@@ -29,7 +29,7 @@ class Orders(Resource):
         return response, 200
 
     @auth.login_required
-    # @permission_required([RolesEnum.deliver, RolesEnum.admin])
+    @permission_required([RolesEnum.deliver, RolesEnum.admin])
     def delete(self):
 
         OrderManager.delete_orders()
@@ -76,7 +76,7 @@ class OrderInTransition(Resource):
 class OrderDelivered(Resource):
 
     @auth.login_required
-    # @permission_required([RolesEnum.deliver, RolesEnum.admin])
+    @permission_required([RolesEnum.deliver, RolesEnum.admin])
     def put(self, order_id):
 
         OrderManager.update_order(order_id, StatusEnum.delivered)
@@ -110,4 +110,4 @@ class CancelPayment(Resource):
             raise BadRequest("Invalid payload data")
 
         OrderManager.cancel_payment(unpaid_order_id)
-        return {"message": "Payment cancelled"}
+        return {"message": "Payment cancelled"}, 200

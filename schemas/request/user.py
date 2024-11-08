@@ -16,8 +16,8 @@ class UserRegisterSchema(UserLoginSchema):
     @validates("password")
     def validate_password(self, value: str):
 
-        if len(value.strip()) < 8 and len(value.strip()) > 12:
-            ValidationError(
+        if len(value.strip()) < 8 or len(value.strip()) > 12:
+            raise ValidationError(
                 "Password length should be between 8 and 12 characters long"
             )
 
@@ -69,4 +69,23 @@ class PasswordChangeSchema(Schema):
             raise ValidationError(
                 "New password cannot be the same as the old password",
                 field_names=["new_password"],
+            )
+        
+    @validates("new_password")
+    def validate_password(self, value: str):
+
+        if len(value.strip()) < 8 or len(value.strip()) > 12:
+            raise ValidationError(
+                "Password length should be between 8 and 12 characters long"
+            )
+
+        policy = PasswordPolicy.from_names(
+            uppercase=2, numbers=2, special=2, nonletters=2
+        )
+
+        result = policy.test(value)
+
+        if result:
+            raise ValidationError(
+                "Invalid password. Use 2 of the following: uppercase, numbers, special, nonletters"
             )

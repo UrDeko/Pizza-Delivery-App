@@ -5,7 +5,12 @@ from managers.auth import auth
 from managers.pizza import PizzaManager
 from models.enums import RolesEnum
 from schemas.response.pizza import PizzaResponseSchema
-from schemas.request.pizza import PizzaRequestSchema, PizzaSizeRequestSchema
+from schemas.request.pizza import (
+    PizzaRequestSchema,
+    PizzaUpdateRequestSchema,
+    PizzaSizeRequestSchema,
+    PizzaSizeUpdateRequestSchema,
+)
 from util.decorators import permission_required, validate_schema
 
 
@@ -17,7 +22,7 @@ class Pizzas(Resource):
         return PizzaResponseSchema().dump(pizzas, many=True)
 
     @auth.login_required
-    # @permission_required([RolesEnum.chef])
+    @permission_required([RolesEnum.chef, RolesEnum.admin])
     @validate_schema(PizzaRequestSchema)
     def post(self):
 
@@ -34,8 +39,8 @@ class Pizza(Resource):
         return PizzaResponseSchema().dump(pizza)
 
     @auth.login_required
-    # @permission_required([RolesEnum.chef])
-    @validate_schema(PizzaRequestSchema)
+    @permission_required([RolesEnum.chef, RolesEnum.admin])
+    @validate_schema(PizzaUpdateRequestSchema)
     def put(self, pizza_id):
 
         data = request.get_json()
@@ -43,7 +48,7 @@ class Pizza(Resource):
         return "", 204
 
     @auth.login_required
-    # @permission_required([RolesEnum.chef])
+    @permission_required([RolesEnum.chef, RolesEnum.admin])
     def delete(self, pizza_id):
 
         PizzaManager.delete_pizza(pizza_id)
@@ -53,7 +58,7 @@ class Pizza(Resource):
 class PizzaSizes(Resource):
 
     @auth.login_required
-    # @permission_required([RolesEnum.chef])
+    @permission_required([RolesEnum.chef, RolesEnum.admin])
     @validate_schema(PizzaSizeRequestSchema)
     def post(self):
 
@@ -65,8 +70,8 @@ class PizzaSizes(Resource):
 class PizzaSize(Resource):
 
     @auth.login_required
-    # @permission_required([RolesEnum.chef])
-    @validate_schema(PizzaSizeRequestSchema)
+    @permission_required([RolesEnum.chef, RolesEnum.admin])
+    @validate_schema(PizzaSizeUpdateRequestSchema)
     def put(self, pizza_id):
 
         data = request.get_json()
@@ -74,7 +79,7 @@ class PizzaSize(Resource):
         return "", 204
 
     @auth.login_required
-    # @permission_required([RolesEnum.chef])
+    @permission_required([RolesEnum.chef, RolesEnum.admin])
     def delete(self, pizza_id):
 
         PizzaManager.delete_pizza(pizza_id, size=True)

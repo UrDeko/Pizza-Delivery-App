@@ -40,4 +40,4 @@ class Password(Resource):
         user = auth.current_user()
         data = request.get_json()
         UserManager.change_password(user, data)
-        return 204
+        return "", 204

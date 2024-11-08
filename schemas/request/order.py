@@ -8,6 +8,12 @@ class OrderItemRequestSchema(Schema):
     size = fields.Enum(SizeEnum, required=True)
     quantity = fields.Integer(required=True)
 
+    @validates("quantity")
+    def validate_quantity(self, quantity):
+
+        if quantity <= 0:
+            raise ValidationError("Quantity should be greater than 0")
+
 
 class OrderRequestSchema(Schema):
     products = fields.List(

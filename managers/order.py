@@ -1,7 +1,3 @@
-import uuid
-
-from datetime import datetime, timezone
-
 from decouple import config
 from sqlalchemy.exc import NoResultFound
 from werkzeug.exceptions import Conflict, InternalServerError, NotFound
@@ -92,7 +88,7 @@ class OrderManager:
         else:
             db.session.rollback()
             db.session.remove()
-            raise Conflict("A conflict occurred while creating the order.")
+            raise Conflict("A conflict occurred while creating the order")
 
     @staticmethod
     def capture_payment(data):

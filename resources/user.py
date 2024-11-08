@@ -27,4 +27,4 @@ class User(Resource):
     def delete(self, user_id):
 
         UserManager.delete_user(user_id)
-        return {"message": f"User with id {user_id} deleted"}, 200
+        return {"message": f"User with ID {user_id} deleted"}, 200

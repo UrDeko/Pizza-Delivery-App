@@ -25,24 +25,24 @@ class PizzaManager:
     @staticmethod
     def create_pizza(data):
 
-        try:
-            data["ingredients"] = [
-                ingredient.strip() for ingredient in data["ingredients"].split(", ")
-            ]
-            encoded_photo = data.pop("photo")
-            photo_extension = data.pop("photo_extension")
-            photo_name = (
-                f"{uuid4()}_{datetime.now(timezone.utc).timestamp()}.{photo_extension}"
-            )
-            path = os.path.join(TEMP_FILE_FOLDER, f"{photo_name}")
-            decode_photo(path, encoded_photo)
-            data["photo_url"] = s3_store.upload_photo(path, photo_name, photo_extension)
-            pizza = PizzaModel(**data)
-            db.session.add(pizza)
-            db.session.flush()
-            os.remove(path)
-        except IntegrityError:
-            raise Conflict()
+        if data["name"] in [p.name for p in PizzaManager.get_pizzas()]:
+            raise Conflict("Pizza with the same name already exists")
+
+        data["ingredients"] = [
+            ingredient.strip() for ingredient in data["ingredients"].split(", ")
+        ]
+        encoded_photo = data.pop("photo")
+        photo_extension = data.pop("photo_extension")
+        photo_name = (
+            f"{uuid4()}_{datetime.now(timezone.utc).timestamp()}.{photo_extension}"
+        )
+        path = os.path.join(TEMP_FILE_FOLDER, f"{photo_name}")
+        decode_photo(path, encoded_photo)
+        data["photo_url"] = s3_store.upload_photo(path, photo_name, photo_extension)
+        pizza = PizzaModel(**data)
+        db.session.add(pizza)
+        db.session.flush()
+        os.remove(path)
 
     @staticmethod
     def add_pizza_size(data):
@@ -60,7 +60,9 @@ class PizzaManager:
         except NoResultFound:
             raise NotFound("Pizza not found")
         except IntegrityError:
-            raise Conflict()
+            raise Conflict(
+                f"Size '{data["size"]}' for pizza '{pizza_name}' already exists"
+            )
 
     @staticmethod
     def get_pizza(pizza_id, size=False):
@@ -79,7 +81,24 @@ class PizzaManager:
     @staticmethod
     def update_pizza(pizza_id, data, size=False):
 
+        if (not size and "name" in data) and (
+            data["name"] in [p.name for p in PizzaManager.get_pizzas()]
+        ):
+            raise Conflict("Pizza with the same name already exists")
+
         pizza = PizzaManager.get_pizza(pizza_id, size)
+
+        if "photo" in data:
+            encoded_photo = data.pop("photo")
+            photo_extension = data.pop("photo_extension")
+            photo_name = (
+                f"{uuid4()}_{datetime.now(timezone.utc).timestamp()}.{photo_extension}"
+            )
+            path = os.path.join(TEMP_FILE_FOLDER, f"{photo_name}")
+            decode_photo(path, encoded_photo)
+            data["photo_url"] = s3_store.upload_photo(path, photo_name, photo_extension)
+            os.remove(path)
+
         for key, value in data.items():
             setattr(pizza, key, value)
         db.session.flush()

@@ -16,7 +16,7 @@ def permission_required(roles: list[RolesEnum]):
 
             user = auth.current_user()
             if not user.role in roles:
-                raise Unauthorized()
+                raise Unauthorized("Permission denied")
 
             return func(*args, **kwargs)
 
