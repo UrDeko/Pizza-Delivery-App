@@ -499,11 +499,7 @@ class TestOrderRequestSchema(BaseTestCase):
 
     def test_invalid_quantity(self):
 
-        data = {
-            "products": [
-                {"name": "Margherita", "size": "m", "quantity": 0}
-            ]
-        }
+        data = {"products": [{"name": "Margherita", "size": "m", "quantity": 0}]}
 
         user = UserFactory(role=RolesEnum.customer)
         token = generate_token(user)

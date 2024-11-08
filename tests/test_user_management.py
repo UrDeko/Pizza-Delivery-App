@@ -9,7 +9,7 @@ from tests.factories import UserFactory
 
 
 def mock_exception():
-    
+
     raise Exception("Invalid state")
 
 
@@ -63,7 +63,6 @@ class TestUserManagement(BaseTestCase):
             self.assertEqual(len(users), 1)
             self.assertEqual(response.status_code, 500)
             self.assertEqual(expected_message, message)
-            
 
     def test_user_register_existing_email_error(self):
 
@@ -223,10 +222,7 @@ class TestUserManagement(BaseTestCase):
 
     def test_user_change_password(self):
 
-        data = {
-            "old_password": "#@KL0305",
-            "new_password": "#@PL0405"
-        }
+        data = {"old_password": "#@KL0305", "new_password": "#@PL0405"}
 
         user = UserFactory(password="#@KL0305")
         token = generate_token(user)
@@ -238,10 +234,7 @@ class TestUserManagement(BaseTestCase):
 
     def test_user_change_password_invalid_password(self):
 
-        data = {
-            "old_password": "#@KL0405",
-            "new_password": "#@PL0405"
-        }
+        data = {"old_password": "#@KL0405", "new_password": "#@PL0405"}
 
         user = UserFactory(password="#@KL0305")
         token = generate_token(user)

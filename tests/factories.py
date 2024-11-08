@@ -85,6 +85,7 @@ class OrderItemFactory(BaseFactory):
     pizza_size_id = 0
     quantity = 1
 
+
 class UnpaidOrderFactory(BaseFactory):
 
     class Meta:

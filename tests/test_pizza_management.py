@@ -71,7 +71,7 @@ class TestPizzaManagement(BaseTestCase):
 
         pizzas = db.session.execute(db.select(PizzaModel)).scalars().fetchall()
         self.assertEqual(len(pizzas), 1)
-        
+
         self.assertEqual(response.status_code, 409)
         self.assertEqual(expected_message, message)
 

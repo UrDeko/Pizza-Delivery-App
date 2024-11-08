@@ -9,14 +9,22 @@ from models.unpaid_order import UnpaidOrderModel
 from models.unpaid_order_item import UnpaidOrderItemModel
 from models.user import UserModel
 from tests.base import BaseTestCase, generate_token
-from tests.factories import OrderFactory, OrderItemFactory, PizzaFactory, PizzaSizeFactory, UnpaidOrderFactory, UnpaidOrderItemFactory, UserFactory
+from tests.factories import (
+    OrderFactory,
+    OrderItemFactory,
+    PizzaFactory,
+    PizzaSizeFactory,
+    UnpaidOrderFactory,
+    UnpaidOrderItemFactory,
+    UserFactory,
+)
 
 
 class TestOrderManagement(BaseTestCase):
 
     @patch("managers.order.PayPalPayment")
     def test_create_order(self, paypal_mock):
-        
+
         payment = MagicMock()
         payment.create.return_value = True
         payment_data = {"links": [{}, {"href": "URL"}]}
@@ -37,18 +45,26 @@ class TestOrderManagement(BaseTestCase):
         pizza_size_m = PizzaSizeFactory(id=1, pizza_id=1)
         pizza_size_s = PizzaSizeFactory(id=2, pizza_id=1, size=SizeEnum.s)
 
-        unpaid_orders = db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        unpaid_orders = (
+            db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_orders), 0)
-        unpaid_order_items = db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        unpaid_order_items = (
+            db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_order_items), 0)
 
         expected_message = "Order created and payment initiated"
         response = self.client.post("/orders", json=data, headers=headers)
         message = response.json["message"]
 
-        unpaid_orders = db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        unpaid_orders = (
+            db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_orders), 1)
-        unpaid_order_items = db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        unpaid_order_items = (
+            db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_order_items), 2)
 
         self.assertEqual(response.status_code, 200)
@@ -74,7 +90,6 @@ class TestOrderManagement(BaseTestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(expected_message, message)
 
-
     def test_create_order_pizza_size_not_found(self):
 
         data = {
@@ -98,7 +113,7 @@ class TestOrderManagement(BaseTestCase):
 
     @patch("managers.order.PayPalPayment")
     def test_create_order_conflict_payment(self, paypal_mock):
-        
+
         payment = MagicMock()
         payment.create.return_value = False
         paypal_mock.create_payment.return_value = payment
@@ -117,23 +132,31 @@ class TestOrderManagement(BaseTestCase):
         pizza_size_m = PizzaSizeFactory(id=1, pizza_id=1)
         pizza_size_s = PizzaSizeFactory(id=2, pizza_id=1, size=SizeEnum.s)
 
-        unpaid_orders = db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        unpaid_orders = (
+            db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_orders), 0)
-        unpaid_order_items = db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        unpaid_order_items = (
+            db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_order_items), 0)
 
         expected_message = "A conflict occurred while creating the order"
         response = self.client.post("/orders", json=data, headers=headers)
         message = response.json["message"]
 
-        unpaid_orders = db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        unpaid_orders = (
+            db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_orders), 0)
-        unpaid_order_items = db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        unpaid_order_items = (
+            db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_order_items), 0)
 
         self.assertEqual(response.status_code, 409)
         self.assertEqual(expected_message, message)
-    
+
     @patch("managers.order.PayPalPayment")
     def test_capture_payment(self, paypal_mock):
 
@@ -147,9 +170,13 @@ class TestOrderManagement(BaseTestCase):
         unpaid_order = UnpaidOrderFactory(id=1, user_id=1, total_price=7.50)
         unpaid_order_item = UnpaidOrderItemFactory(unpaid_order_id=1, pizza_size_id=1)
 
-        unpaid_orders = db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        unpaid_orders = (
+            db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_orders), 1)
-        unpaid_order_items = db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        unpaid_order_items = (
+            db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_order_items), 1)
         orders = db.session.execute(db.select(OrderModel)).scalars().fetchall()
         self.assertEqual(len(orders), 0)
@@ -157,12 +184,18 @@ class TestOrderManagement(BaseTestCase):
         self.assertEqual(len(order_items), 0)
 
         expected_message = "Order successfully created"
-        response = self.client.get("/payment/execute?unpaid_order_id=1&paymentId=1&PayerID=1")
+        response = self.client.get(
+            "/payment/execute?unpaid_order_id=1&paymentId=1&PayerID=1"
+        )
         message = response.json["message"]
 
-        unpaid_orders = db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        unpaid_orders = (
+            db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_orders), 0)
-        unpaid_order_items = db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        unpaid_order_items = (
+            db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_order_items), 0)
         orders = db.session.execute(db.select(OrderModel)).scalars().fetchall()
         self.assertEqual(len(orders), 1)
@@ -181,7 +214,9 @@ class TestOrderManagement(BaseTestCase):
         paypal_mock.find_payment.return_value = payment
 
         expected_message = f"Error: payment execution failed: {payment.error}"
-        response = self.client.get("/payment/execute?unpaid_order_id=1&paymentId=1&PayerID=1")
+        response = self.client.get(
+            "/payment/execute?unpaid_order_id=1&paymentId=1&PayerID=1"
+        )
         message = response.json["message"]
 
         self.assertEqual(response.status_code, 500)
@@ -201,18 +236,26 @@ class TestOrderManagement(BaseTestCase):
         unpaid_order = UnpaidOrderFactory(id=1, user_id=1, total_price=7.50)
         unpaid_order_item = UnpaidOrderItemFactory(unpaid_order_id=1, pizza_size_id=1)
 
-        unpaid_orders = db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        unpaid_orders = (
+            db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_orders), 1)
-        unpaid_order_items = db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        unpaid_order_items = (
+            db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_order_items), 1)
 
         expected_message = f"Payment cancelled"
         response = self.client.get("/payment/cancel?unpaid_order_id=1")
         message = response.json["message"]
 
-        unpaid_orders = db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        unpaid_orders = (
+            db.session.execute(db.select(UnpaidOrderModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_orders), 0)
-        unpaid_order_items = db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        unpaid_order_items = (
+            db.session.execute(db.select(UnpaidOrderItemModel)).scalars().fetchall()
+        )
         self.assertEqual(len(unpaid_order_items), 0)
 
         self.assertEqual(response.status_code, 200)
@@ -398,7 +441,7 @@ class TestOrderManagement(BaseTestCase):
         self.assertEqual(expected_message, message)
 
     def test_update_order_status_delivered(self):
-        
+
         deliver = UserFactory(role=RolesEnum.deliver)
         token = generate_token(deliver)
         headers = {"Authorization": f"Bearer {token}"}
@@ -417,7 +460,7 @@ class TestOrderManagement(BaseTestCase):
         self.assertEqual(expected_message, message)
 
     def test_update_order_status_delivered_invalid_id(self):
-        
+
         deliver = UserFactory(role=RolesEnum.deliver)
         token = generate_token(deliver)
         headers = {"Authorization": f"Bearer {token}"}
@@ -428,7 +471,7 @@ class TestOrderManagement(BaseTestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertEqual(expected_message, message)
-    
+
     @patch("managers.order.twilio_notify")
     def test_update_order_status_in_transition(self, twilio_mock):
 
@@ -449,10 +492,12 @@ class TestOrderManagement(BaseTestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(expected_message, message)
-        twilio_mock.send_notification.assert_called_once_with(config("TWILIO_VERIFIED_NUMBER"), sms_message)
+        twilio_mock.send_notification.assert_called_once_with(
+            config("TWILIO_VERIFIED_NUMBER"), sms_message
+        )
 
     def test_update_order_status_in_transition_invalid_id(self):
-        
+
         deliver = UserFactory(role=RolesEnum.deliver)
         token = generate_token(deliver)
         headers = {"Authorization": f"Bearer {token}"}
@@ -465,7 +510,7 @@ class TestOrderManagement(BaseTestCase):
         self.assertEqual(expected_message, message)
 
     def test_update_order_status_pending(self):
-        
+
         deliver = UserFactory(role=RolesEnum.deliver)
         token = generate_token(deliver)
         headers = {"Authorization": f"Bearer {token}"}
@@ -484,7 +529,7 @@ class TestOrderManagement(BaseTestCase):
         self.assertEqual(expected_message, message)
 
     def test_update_order_status_pending_invalid_id(self):
-        
+
         deliver = UserFactory(role=RolesEnum.deliver)
         token = generate_token(deliver)
         headers = {"Authorization": f"Bearer {token}"}
