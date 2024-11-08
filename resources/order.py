@@ -20,7 +20,7 @@ class Orders(Resource):
         return {"orders": OrderResponseSchema().dump(orders, many=True)}, 200
 
     @auth.login_required
-    @permission_required([RolesEnum.customer, RolesEnum.admin])
+    @permission_required(RolesEnum.customer)
     @validate_schema(OrderRequestSchema)
     def post(self):
         user = auth.current_user()
