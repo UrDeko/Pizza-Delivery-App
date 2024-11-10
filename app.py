@@ -1,22 +1,9 @@
 from decouple import config
-
 from flask import jsonify
-# from flask_migrate import Migrate
-# from flask_restful import Api
 
 from config import create_app
 from db import db
-# from resources.routes import routes
 
-
-# app = Flask(__name__)
-# app.config.from_object(config("ENVIRONMENT"))
-
-# db.init_app(app)
-# migrate = Migrate(app, db)
-# api = Api(app)
-
-# [api.add_resource(*route) for route in routes]
 
 environment = config("DEV_ENVIRONMENT")
 app = create_app(environment)
@@ -32,7 +19,7 @@ def commit_on_teardown(exception=None):
             db.session.rollback()
             return (
                 jsonify({
-                    "error": "An error occurred while saving data. Try again later"
+                    "Error": "An error occurred while saving data. Try again later"
                 }),
                 500
             )
@@ -41,7 +28,7 @@ def commit_on_teardown(exception=None):
         db.session.rollback()
         return (
             jsonify({
-                "error": "An unexpected error occurred. Please, contact support if the issue persists"
+                "Error": "An unexpected error occurred. Please, contact support if the issue persists"
             }),
             500
         )
